@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl"
+			value="jdbc:mysql://localhost/chatapp?characterEncoding=utf8" />
+		<property name="user" value="dywlr" />
+		<property name="password" value="1111" />
+	</bean>
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:/mybatis/chatDao.xml</value>
+				<value>classpath:/mybatis/loginDao.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="chatDao" class="org.mybatis.spring.mapper.MapperFactoryBean" >
+		<property name="mapperInterface" value="test.dao.ChatDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+
+	<bean id="loginDao" class="org.mybatis.spring.mapper.MapperFactoryBean" >
+		<property name="mapperInterface" value="test.dao.LoginDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+
+
+	<bean id="chattingService"
+		class="test.service.ChattingService">
+		<property name="chatDao" ref="chatDao"/>
+	</bean>	
+
+	<bean id="loginService"
+		class="test.service.LoginService">
+		<property name="loginDao" ref="loginDao"/>
+	</bean>	
+		
+</beans>

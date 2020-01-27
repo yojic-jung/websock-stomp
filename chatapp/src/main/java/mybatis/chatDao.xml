@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="test.dao.ChatDao">
+
+	<select id="userList" resultType="String" >
+		select id from chat_member where id not in (#{id});
+	</select>
+	
+	<select id="checkRoom" resultType="Integer" >
+		select count(*) from chat_room where user like concat('%',#{sender},'%') and user like concat('%',#{receiver},'%');
+	</select>
+	
+	<select id="takeRoomNum" resultType="Integer" >
+		select id from chat_room where user like concat('%',#{sender},'%') and user like concat('%',#{receiver},'%');
+	</select>
+	
+	<insert id="makeRoom" >
+		insert  into chat_room (user) values (#{user})
+	</insert>
+	
+	<insert id="insertMessage" >
+		insert  into message (chatroom_id, message_sender, message_receiver, message_content) values (#{chatroom_id},#{message_sender},#{message_receiver},#{message_content})
+	</insert>
+	
+	<select id="takeMessage" resultType="test.model.Message" >
+		select chatroom_id, message_sender, message_receiver, message_content from message where chatroom_id=#{chatroom_id} order by message_id asc
+	</select>
+
+</mapper>
